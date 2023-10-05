@@ -1,6 +1,15 @@
 body {
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;
+  opacity: 0;
+  transition: opacity 3000ms;
+}
+
+/* id selector for success ::-webkit-validation-bubble-message */
+/* transition causes it to fade in and out */
+#save-success-message {
+  opacity: 0;
+  transition: opacity 1000ms;
 }
 
 textarea {
