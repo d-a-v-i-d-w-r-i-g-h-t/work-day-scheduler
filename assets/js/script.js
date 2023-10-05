@@ -1,3 +1,19 @@
+// pointer variables
+
+
+// global constants
+const firstHour = 8; // first hour of the day is 8 (8 am)
+const lastHour = 18; // last hour of the day is 18 (6 pm)
+const hourPrefix = "hour-" // prefix for hour element id tags, used with hour value 8 through 18
+
+// global variables
+
+// object variable to store daily events based on hour
+var myEvents = {};
+
+
+
+
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
@@ -21,3 +37,79 @@ $(function () {
   //
   // TODO: Add code to display the current date in the header of the page.
 });
+
+// entered text will sit there but won't be save until save button is clicked
+// only saves the row that was clicked
+// something should change color to indicate 'saved'
+
+function loadMyEvents() {
+  myEvents = JSON.parse(localStorage.getItem("myEventsStringify"));
+
+  var myEventsKeys = Object.keys(myEvents);
+
+  // if high scores aren't saved in local storage, initialize the object variable
+  if (!myEvents) {
+    initializeMyEvents();
+  }
+}
+
+// save myEvents object variable to localStorage, notify user
+function saveMyEvents() {
+  localStorage.setItem("myEventsStringify", JSON.stringify(myEvents));
+  messageSaveSuccess();
+}
+
+function messageSaveSuccess() {
+  //////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
+}
+
+function initializeMyEvents() {
+  myEvents = {};
+  for (var h = firstHour; h <= lastHour; h++) {
+    myEvents[h] = "";
+  }
+  saveMyEvents();
+}
+
+// add event text to timeblocks
+function updateMyEvents() {
+  for (var h = firstHour; h < lastHour + 1; h++) {
+    document.getElementById(hourPrefix + h).textContent = myEvents[h];
+  }hour
+}
+
+// save a single event to myEvents and local storage based on hour argument
+function saveSingleEvent(hour) {
+  if (hour >= firstHour && hour <= lastHour) {
+    myEvents[hour] = document.getElementById(hourPrefix + hour).textContent
+  }
+  saveMyEvents();
+}
+
+
+// formats input timeblocks by updating the timeblock class
+function formatTimeBlocks() {
+  // get current hour in 24-hr time, convert to a number
+  var currentHour = Number(dayjs().format('H'));
+  var element;
+
+  for (var h = firstHour; h < lastHour + 1; h++) {
+
+    // get element id based on the input argument
+    element = document.getElementById(hourPrefix + hour);
+
+    // apply hour element class name conditionally based on current hour
+    // formatting will automatically be applied from style.css
+    if (hour < currentHour) {
+      element.className = "past";
+    } else if (hour === currentHour) {
+      element.className = "present";
+    } else {
+      element.className = "future";
+    }
+  }
+}
+
+
