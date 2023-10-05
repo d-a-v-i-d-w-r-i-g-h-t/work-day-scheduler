@@ -1,29 +1,10 @@
 // global constants
 const firstHour = 8; // first hour of the day is 8 (8 am)
-const lastHour = 18; // last hour of the day is 18 (6 pm)
+const lastHour = 20; // last hour of the day is 18 (6 pm)
 const hourPrefix = "hour-" // prefix for hour element id tags, used with hour value 8 through 18
-
+const myEventsStringify = "myEventsStringify";
 // object variable to store daily events based on hour
 var myEvents = {};
-
-// 1. on load
-//    load myEvents from localStorage or initialize myEvents object
-//    generate time-blocks
-//    format time blocks
-//    add page current date
-//    start time interval
-// 2. inside time interval, updates every minute (60,000 ms)
-//    update page date
-//    update time-block formatting
-// 3. time-blocks are text-areas, can be typed in
-//    when save icon is clicked, save that time block to myEvents
-//    display temporary success message at top of page (timeout)
-//    save myEvents to localStorage
-
-
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
 
 
 $(function () {
@@ -46,26 +27,29 @@ $(function () {
   }
 
 
-     //---------------------------------//
-    //  Function: addTimeBlocks        //
-   //---------------------------------//
-  // adds timeblocks to the page
+     //------------------------------------//
+    //  Function: fillTimeBlockContainer  //
+   //------------------------------------//
+  // adds timeblocks to the page and populate
   function fillTimeBlockContainer() {
     var element;
     var hourLabel;
     for (var hour = firstHour; hour < lastHour + 1; hour++) {
       addTimeBlock(hour);
       // add hour label
-      // hourLabel = convert24hrTo12hr(hour);
-      // element = $( "#" + hourPrefix + hour );
-      // element.children('.hour').text(hourLabel);
+      hourLabel = convert24hrTo12hr(hour);
+      element = $( "#" + hourPrefix + hour );
+      element.children('.hour').text(hourLabel);
     }
     loadMyEvents();
     populateMyEvents();
-    
   }
 
 
+     //---------------------------------//
+    //  Function: addTimeBlocks        //
+   //---------------------------------//
+  // add hour 'h' timeblock to the page
   function addTimeBlock(h) {
     var tbContainer = $( "#time-block-container" );
     
@@ -79,8 +63,6 @@ $(function () {
     var hourDiv = $("<div>");
     hourDiv.addClass('col-2 col-md-1 hour text-center py-3');
     timeBlockDiv.append(hourDiv);
-    hourLabel = convert24hrTo12hr(h);
-    // timeBlockDiv.text('9AM');
 
     // add description textarea
     var descriptionTA = $("<textarea>");
@@ -116,10 +98,17 @@ $(function () {
    //---------------------------------//
   // load myEvents from localStorage, initialize if not found
   function loadMyEvents() {
-    myEvents = JSON.parse(localStorage.getItem("myEventsStringify"));
+    myEvents = JSON.parse(localStorage.getItem(myEventsStringify));
 
     // if my events aren't saved in local storage, initialize the object variable
     if (!myEvents) {
+      initializeMyEvents();
+    }
+    var numberOfHours = lastHour - firstHour + 1;
+    if (Object.keys(myEvents).length != numberOfHours ||
+        Object.keys(myEvents)[0] != firstHour ||
+        Object.keys(myEvents)[numberOfHours-1] != lastHour) {
+      localStorage.removeItem(myEventsStringify);
       initializeMyEvents();
     }
   }
@@ -166,7 +155,6 @@ $(function () {
     for (var hour = firstHour; hour < lastHour + 1; hour++) {
 
       // get element id based on the input argument
-      // element = document.getElementById(hourPrefix + hour);////////////////////////////////////////
       element = $( "#" + hourPrefix + hour );
 
       // remove past, present, and future classes
@@ -176,8 +164,10 @@ $(function () {
       // formatting will automatically be applied from style.css
       if (hour < currentHour) {
         element.removeClass(pastStr).addClass(pastStr);
+
       } else if (hour === currentHour) {
         element.removeClass(pastStr).addClass(presentStr);
+
       } else {
         element.removeClass(pastStr).addClass(futureStr);
       }
@@ -200,11 +190,8 @@ $(function () {
 // sets time interval for page refresh every 1 min (60000 ms)
   function dateAndTime() {
     var timeInterval = setInterval(function() {
-
       updatePageDate();
       formatTimeBlocks(); 
-
-      console.log('tick');
     }, 1000);
   }
 
@@ -218,12 +205,9 @@ $(function () {
 
     // get the hour element ID of the clicked button
     var elementID = $(event.target).parents('.time-block').attr('id');
-    console.log(elementID);
-    console.log(typeof(elementID));
 
     // get the hour number
     var elementHour = Number(elementID.slice(5));
-
     saveSingleEvent(elementHour);
   } );
 
@@ -233,7 +217,7 @@ $(function () {
   // save a single event to myEvents and local storage based on hour argument
   function saveSingleEvent(hour) {
     if (hour >= firstHour && hour <= lastHour) {
-      myEvents[hour] = $(hourPrefix + hour).children(".description").val();
+      myEvents[hour] = $("#" + hourPrefix + hour).children(".description").val();
     }
     saveMyEvents();
   }
@@ -243,7 +227,7 @@ $(function () {
    //---------------------------------//
   // save myEvents object variable to localStorage, notify user
   function saveMyEvents() {
-    localStorage.setItem("myEventsStringify", JSON.stringify(myEvents));
+    localStorage.setItem(myEventsStringify, JSON.stringify(myEvents));
     messageSaveSuccess();
   }
 
@@ -251,7 +235,7 @@ $(function () {
     //  Function: messageSaveSuccess   //
    //---------------------------------//
   // display a temporary message of success after saving
-function messageSaveSuccess() {
+  function messageSaveSuccess() {
     var saveSuccess = $("#save-success-message");
     saveSuccess.css("opacity", 1);
 
@@ -259,30 +243,6 @@ function messageSaveSuccess() {
     setTimeout(function(){
       saveSuccess.css("opacity", 0);
     }, 3000);
-
   }
-
-
-
-
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
-
-
-  // entered text will sit there but won't be save until save button is clicked
-  // only saves the row that was clicked
-  // something should change color to indicate 'saved'
-
-  
 
 });
