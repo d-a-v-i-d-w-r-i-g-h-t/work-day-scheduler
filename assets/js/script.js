@@ -5,7 +5,6 @@
 const firstHour = 8; // first hour of the day is 8 (8 am)
 const lastHour = 18; // last hour of the day is 18 (6 pm)
 const hourPrefix = "hour-" // prefix for hour element id tags, used with hour value 8 through 18
-
 // global variables
 
 // object variable to store daily events based on hour
@@ -36,7 +35,7 @@ $(function () {
   // attribute of each time-block be used to do this?
   //
   // TODO: Add code to display the current date in the header of the page.
-});
+
 
 // entered text will sit there but won't be save until save button is clicked
 // only saves the row that was clicked
@@ -73,17 +72,24 @@ function initializeMyEvents() {
   saveMyEvents();
 }
 
+// takes in 24-hour input and returns 12-hr time with AM/PM
+function convert24hrTo12hr(inputHour) {
+  return dayjs().hour(inputHour).format("hA"); // 17 => '5PM', 9 => '9AM'
+}
+
 // add event text to timeblocks
 function updateMyEvents() {
   for (var h = firstHour; h < lastHour + 1; h++) {
-    document.getElementById(hourPrefix + h).textContent = myEvents[h];
+    // document.getElementById(hourPrefix + h).textContent = myEvents[h];////////////////////
+    $(hourPrefix + h).children("description").textContent = myEvents[h];
   }hour
 }
 
 // save a single event to myEvents and local storage based on hour argument
 function saveSingleEvent(hour) {
   if (hour >= firstHour && hour <= lastHour) {
-    myEvents[hour] = document.getElementById(hourPrefix + hour).textContent
+    // myEvents[hour] = document.getElementById(hourPrefix + hour).textContent////////////////////
+    myEvents[hour] = $(hourPrefix + hour).children("description").textContent
   }
   saveMyEvents();
 }
@@ -91,25 +97,33 @@ function saveSingleEvent(hour) {
 
 // formats input timeblocks by updating the timeblock class
 function formatTimeBlocks() {
-  // get current hour in 24-hr time, convert to a number
+   // strings used with addition of past, present, or future class
+   const timeBlockClassPrefix = "row time-block ";
+   const pastStr = "past";
+   const presentStr = "present";
+   const futureStr = "future";
+  // use dayjs to get current hour in 24-hr time, convert to a number
   var currentHour = Number(dayjs().format('H'));
   var element;
 
+  // update format class for every hour block based on current hour
   for (var h = firstHour; h < lastHour + 1; h++) {
 
     // get element id based on the input argument
-    element = document.getElementById(hourPrefix + hour);
+    // element = document.getElementById(hourPrefix + hour);////////////////////////////////////////
+    element = $(hourPrefix + hour);
 
     // apply hour element class name conditionally based on current hour
     // formatting will automatically be applied from style.css
     if (hour < currentHour) {
-      element.className = "past";
+      element.className = timeBlockClassPrefix + pastStr;
     } else if (hour === currentHour) {
-      element.className = "present";
+      element.className = timeBlockClassPrefix + presentStr;
     } else {
-      element.className = "future";
+      element.className = timeBlockClassPrefix + futureStr;
     }
   }
 }
 
 
+});
