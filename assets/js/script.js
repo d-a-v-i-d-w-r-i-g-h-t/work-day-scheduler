@@ -234,7 +234,7 @@ $(function () {
   // save a single event to myEvents and local storage based on hour argument
   function saveSingleEvent(hour) {
     if (hour >= firstHour && hour <= lastHour) {
-      myEvents[hour] = $("#" + hourPrefix + hour).children(".description").val();
+      myEvents[hour] = $.trim($("#" + hourPrefix + hour).children(".description").val());
     }
     saveMyEvents();
   }

@@ -22,28 +22,30 @@ N/A
 
 ## Usage 
 
-Provide instructions and examples for use. Include screenshots as needed. 
+The following is a screenshot of the Work Day scheduler.
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+On page load, the Work Day Scheduler attempts to retrieve events from local storage. If there are no stored events, the scheduler is loaded with blank entry fields. A number of hourly time blocks are then generated and appended to the page based on global constants ```firstHour``` and ```lastHour```. Although not directly modifiable by the user, the code is built with the future option available.
 
-```md
-![alt text](assets/images/screenshot.png)
-```
+![Screenshot of work day scheduler application](assets/images/work-day-scheduler.png)
+
+Below the title and welcome message, the current date and time are displayed, automatically updated every minute. Additionally, color formatting is dynamically applied to the hourly time blocks based on the current time. The current hour is highlighted red, hours in the past are gray, and hours in the future are green. The same one-minute update frequency appiles to this formatting as well.
+
+Any time block can be clicked on for user entry of an event description. If the user clicks the save icon on the right side of the time block, that event description will be saved to local storage and will persist between sessions. Upon save, a save notification message is displayed to the user in the header below the date, as shown below:
+
+![Screenshot of work day scheduler application](assets/images/save-message.png)
 
 
 ## Credits
 
-List your collaborators, if any, with links to their GitHub profiles.
+I read the [Day.js](https://day.js.org/en/) documentation to learn about time and date [formatting](https://day.js.org/docs/en/display/format).
 
-If you used any third-party assets that require attribution, list the creators with links to their primary web presence in this section.
+I learned further details of ```localStorage``` at [mdn web docs](https://developer.mozilla.org/en-US/), [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
 
-If you followed tutorials, include links to those here as well.
+I learned about working with textareas from [TutorialRepublic](https://www.tutorialrepublic.com/), [How to get the value of a textarea in jQuery](https://www.tutorialrepublic.com/faq/how-to-get-the-value-of-a-textarea-in-jquery.php).
 
 
 ## License
 
 Please refer to the LICENSE in the repo.
-
-
 
 ---
