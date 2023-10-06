@@ -1,11 +1,14 @@
-// global constants
-const firstHour = 8; // first hour of the day is 8 (8 am)
-const lastHour = 20; // last hour of the day is 18 (6 pm)
+// first hour and last hour values can be changed if desired
+// the page creates time blocks based on these specified hour values
+const firstHour = 8; // 24-hr time - first hour of the day is 8 (8 am)
+const lastHour = 20; // 24-hr time - last hour of the day is 18 (6 pm)
+
+// other global constants
 const hourPrefix = "hour-" // prefix for hour element id tags, used with hour value 8 through 18
 const myEventsStringify = "myEventsStringify";
-// object variable to store daily events based on hour
-var myEvents = {};
 
+// object variable to store daily events based on hour, initialized later
+var myEvents = {};
 
 $(function () {
   
@@ -67,6 +70,7 @@ $(function () {
     // add description textarea
     var descriptionTA = $("<textarea>");
     descriptionTA.addClass('col-8 col-md-10 description');
+    descriptionTA.attr('name', 'event-description');
     descriptionTA.attr('rows', 3);
     timeBlockDiv.append(descriptionTA);
 
@@ -104,12 +108,25 @@ $(function () {
     if (!myEvents) {
       initializeMyEvents();
     }
+    // check if the myEvents on local storage doesn't match the code assumptions
+    // this could occur because the firstHour or lastHour global variables were changed
     var numberOfHours = lastHour - firstHour + 1;
     if (Object.keys(myEvents).length != numberOfHours ||
         Object.keys(myEvents)[0] != firstHour ||
         Object.keys(myEvents)[numberOfHours-1] != lastHour) {
+      
+      // save what was retrieved from localStorage in to retain any existing event descriptions
+      var tempEvents = myEvents;
+
+      // clear the itme from localStorage and reinitialiaze the object variable and the localStorage item
       localStorage.removeItem(myEventsStringify);
       initializeMyEvents();
+      // copy any event from tempEvents into myEvents
+      for (var i = firstHour; i < lastHour + 1; i++) {
+        if (tempEvents[i]) {
+          myEvents[i] = tempEvents[i];
+        }
+      }
     }
   }
 
